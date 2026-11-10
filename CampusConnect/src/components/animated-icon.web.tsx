@@ -1,12 +1,48 @@
 import { Image } from 'expo-image';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Keyframe, Easing } from 'react-native-reanimated';
 
 import classes from './animated-icon.module.css';
 const DURATION = 300;
 
+const splashKeyframe = new Keyframe({
+  0: {
+    opacity: 1,
+    transform: [{ scale: 1 }],
+  },
+  20: {
+    opacity: 1,
+  },
+  70: {
+    opacity: 0,
+    easing: Easing.elastic(0.7),
+  },
+  100: {
+    opacity: 0,
+    transform: [{ scale: 1 }],
+    easing: Easing.elastic(0.7),
+  },
+});
+
 export function AnimatedSplashOverlay() {
-  return null;
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <Animated.View entering={splashKeyframe.duration(600)} style={styles.splashOverlay}>
+      <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
+    </Animated.View>
+  );
 }
 
 const keyframe = new Keyframe({
@@ -104,5 +140,12 @@ const styles = StyleSheet.create({
     width: 128,
     height: 128,
     position: 'absolute',
+  },
+  splashOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#208AEF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
   },
 });
